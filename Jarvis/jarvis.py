@@ -8,16 +8,28 @@ import random
 import pyautogui
 import pyjokes
 
-engine = pyttsx3.init()
-voices = engine.getProperty('voices')
-engine.setProperty('voice', voices[1].id)  
-engine.setProperty('rate', 150)
-engine.setProperty('volume', 1)
+# engine = pyttsx3.init()
+# voices = engine.getProperty('voices')
+# engine.setProperty('voice', voices[1].id)  
+# engine.setProperty('rate', 150)
+# engine.setProperty('volume', 1)
 
+
+# Register Brave browser
+brave_path = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
+wb.register('brave', None, wb.BackgroundBrowser(brave_path))
 
 def speak(audio) -> None:
-    engine.say(audio)
-    engine.runAndWait()
+    try:
+        engine = pyttsx3.init()
+        voices = engine.getProperty('voices')
+        engine.setProperty('voice', voices[1].id)
+        engine.setProperty('rate', 150)
+        engine.setProperty('volume', 1)
+        engine.say(audio)
+        engine.runAndWait()
+    except Exception as e:
+        print(f"Speech error: {e}")
 
 
 def time() -> None:
@@ -54,6 +66,7 @@ def wishme() -> None:
     else:
         speak("Good night, see you tomorrow.")
 
+    speak("I am Jarvis, your desktop voice assistant.")
     assistant_name = load_name()
     speak(f"{assistant_name} at your service. Please tell me how may I assist you.")
     print(f"{assistant_name} at your service. Please tell me how may I assist you.")
@@ -73,9 +86,8 @@ def takecommand() -> str:
     with sr.Microphone() as source:
         print("Listening...")
         r.pause_threshold = 1
-
         try:
-            audio = r.listen(source, timeout=5)  # Listen with a timeout
+            audio = r.listen(source, timeout=5)  # wait for speech
         except sr.WaitTimeoutError:
             speak("Timeout occurred. Please try again.")
             return None
@@ -83,7 +95,7 @@ def takecommand() -> str:
     try:
         print("Recognizing...")
         query = r.recognize_google(audio, language="en-in")
-        print(query)
+        print("You said:", query)
         return query.lower()
     except sr.UnknownValueError:
         speak("Sorry, I did not understand that.")
@@ -122,7 +134,7 @@ def set_name() -> None:
             file.write(name)
         speak(f"Alright, I will be called {name} from now on.")
     else:
-        speak("Sorry, I couldn't catch that.")
+        speak("Sorry")
 
 def load_name() -> str:
     """Loads the assistant's name from a file, or uses a default name."""
@@ -168,11 +180,20 @@ if __name__ == "__main__":
             song_name = query.replace("play music", "").strip()
             play_music(song_name)
 
+        elif "close music" in query:
+            speak("Closing music player.")
+            import os
+            os.system("taskkill /im Microsoft.Media.Player.exe  /f")
+
+        elif "tasks" in query:
+            speak("Here are the tasks opens:")
+            os.system("tasklist")
+
         elif "open youtube" in query:
-            wb.open("youtube.com")
+            wb.get('brave').open("https://youtube.com")
             
         elif "open google" in query:
-            wb.open("google.com")
+            wb.get('brave').open("https://google.com")
 
         elif "change your name" in query:
             set_name()
