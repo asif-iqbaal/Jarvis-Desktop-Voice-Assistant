@@ -128,7 +128,7 @@ def takecommand() -> str:
         return query.lower()
     except sr.UnknownValueError:
         if active:
-            speak("problem in understanding, please repeat.").
+            speak("problem in understanding, please repeat.")
         return None
     except sr.RequestError:
         speak("Speech recognition service is unavailable.")
