@@ -125,7 +125,7 @@ def takecommand() -> str:
         print("Recognizing...")
         query = r.recognize_google(audio, language="en-in")
         print("You said:", query)
-        return query.lower()
+        return query.lower() 
     except sr.UnknownValueError:
         if active:
             speak("problem in understanding, please repeat.")
