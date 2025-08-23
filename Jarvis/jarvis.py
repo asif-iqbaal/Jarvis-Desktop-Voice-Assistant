@@ -24,6 +24,7 @@ stop_speaking = False
 active = True   
 TODO_TASK = "data.txt"
 PREVIOUD_TASK = "previous_task.txt"
+conversation_history = []
 
 # Register Brave browser
 brave_path = r"C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"
@@ -46,9 +47,10 @@ def chat_with_gemini(query: str) -> str:
 
     if "jarvis" not in query.lower():
         return ""
-    
+    conversation_history.append({"role": "user", "parts" : [query]})
     try:
-        response = gemini_model.generate_content(query + " in the short and concise way.")
+        response = gemini_model.generate_content(conversation_history)
+        conversation_history.append({"role": "model", "parts" : response.text})
         if response and response.text:
             with open(PREVIOUD_TASK, "a", encoding="utf-8") as f:
                 f.write(f"User: {query}\n")
